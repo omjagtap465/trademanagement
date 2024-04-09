@@ -27,5 +27,5 @@ function asyncHandler(fn) {
       next(error);
     }
   };
-  //   return Promise.resolve(as);
 }
+export { asyncHandler };
