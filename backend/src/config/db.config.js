@@ -14,10 +14,11 @@ const sqlConnection = async (query, arrayofVariables = []) => {
   //   return pool;
   //   const sql = sqlConnection();
   const conn = await pool.getConnection();
+  // console.log(query);
   const [results] = await conn.query(query, arrayofVariables);
-  console.log(results);
+  // console.log(results);
   pool.releaseConnection(conn);
-  console.log(results);
+  // console.log(results);
   return results;
 };
 const redisConnection = async () => {

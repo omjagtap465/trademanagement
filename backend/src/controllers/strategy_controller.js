@@ -1,9 +1,11 @@
 import { asyncHandler } from "../../utils/async_handler.js";
-import { StrategyService } from "../services/strategy_service.js";
+import { StrategyService } from "../services/index.js";
 import { ApiResponse } from "../../utils/api_response.js";
+import { TOTP } from "totp-generator";
 const strategyService = new StrategyService();
 const addStrategyController = asyncHandler(async (req, res) => {
   const { strategyName, userId } = req.body;
+
   if (!strategyName || !userId) {
     return res
       .status(400)

@@ -18,6 +18,9 @@
     "mysql2": "^3.9.3",
     "nodemailer": "^6.9.13",
     "nodemon": "^3.0.3",
-    "redis": "^4.6.13"
+    "random-key": "^0.3.2",
+    "redis": "^4.6.13",
+    "totp": "^0.0.1",
+    "totp-generator": "^1.0.0"
   }
 }

@@ -4,13 +4,18 @@ import {
   registerController,
   addStrategyController,
   deleteStrategyController,
+  addTradeController,
+  getAllTradesController,
+  verifyOtpController,
 } from "../../controllers/index.js";
 const router = express.Router();
 router.post("/register", registerController);
 router.post("/login", loginUserController);
+router.post("/verifyotp", verifyOtpController);
 router.post("/addstrategy", addStrategyController);
-router.post("/deletestrategy", deleteStrategyController);
-router.post("/", deleteStrategyController);
+router.delete("/deletestrategy", deleteStrategyController);
+router.post("/trades/add", addTradeController);
+router.get("/trades/getalltrades", getAllTradesController);
 export { router };
 // symbol_mapping
 // ins token is num
@@ -25,3 +30,7 @@ export { router };
 // side
 // strategy_id
 // symobol Id
+
+// if symbol is there in the db table symbol_mapp ->
+// then ->
+//
