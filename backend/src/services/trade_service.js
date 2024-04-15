@@ -43,39 +43,104 @@ quantity,stg.id,strategy_name
     ]);
     console.log(selectedTradesByStrategy);
     let trades = new Map();
+    let prices = new Map();
     selectedTradesByStrategy.forEach((stock) => {
       let key = `${stock.tradingsymbol} ${stock.side}`;
       if (!trades.has(key)) {
         trades.set(key, {
           quantity: 0,
           price: 0,
+          lots: 0,
+        });
+        prices.set(key, {
+          price: {},
         });
       }
       let currentTrade = trades.get(key);
       currentTrade.quantity += stock.quantity;
-      currentTrade = trades.get(key);
+      let priceOfEachStrike = prices.get(key);
+      currentTrade.lots += 1;
+      priceOfEachStrike.price[currentTrade.lots] = stock.price;
+      currentTrade.price =
+        (currentTrade.price + stock.price) / currentTrade.lots;
+      //
       const oppositeSide = stock.side == "Buy" ? "Sell" : "Buy";
       const oppositeKey = `${stock.tradingsymbol} ${oppositeSide}`;
       if (trades.has(oppositeKey)) {
+        let priceOfEachStrikeOppositSide = prices.get(oppositeKey);
         let oppositeTrade = trades.get(oppositeKey);
         const quantity = oppositeTrade.quantity - currentTrade.quantity;
+        let oppositeOrderTradePrice = priceOfEachStrikeOppositSide.price;
+        let currentOrderTradePrice = priceOfEachStrike.price;
+        oppositeOrderTradePrice[`${currentTrade.lots}`] = 0;
+        let oppositeValue = 0;
+        let oppositeCount = 0;
+        for (const key in oppositeOrderTradePrice) {
+          if (oppositeOrderTradePrice[key] > 0) {
+            oppositeValue += oppositeOrderTradePrice[key];
+            oppositeCount++;
+          }
+
+          console.log(
+            "Current Trade Price",
+            oppositeValue,
+            "Count",
+            oppositeCount,
+            oppositeValue / oppositeCount,
+            "Key",
+            oppositeValue
+          );
+        }
+        let val = 0;
+        let count = 0;
+        let i = 0;
+        for (const key in currentOrderTradePrice) {
+          i++;
+          if (i < currentTrade.lots) {
+            currentOrderTradePrice[key] = 0;
+          }
+          if (currentOrderTradePrice[key] > 0) {
+            // if(currentOrderTradePrice[key] < ;)
+            val += currentOrderTradePrice[key];
+            count++;
+          }
+
+          console.log(
+            "Current Trade Price self",
+            val,
+            "Count",
+            count,
+            val / count,
+            "Key",
+            key
+          );
+        }
+        let finalPriceOpposite = oppositeValue / oppositeCount;
+        let finalPrice = val / count;
+        if (isNaN(finalPriceOpposite)) {
+          finalPriceOpposite = 0;
+        }
         if (quantity >= 0) {
           trades.set(oppositeKey, {
             quantity: quantity,
-            // price: currentTrade.price+stock,
+            price: finalPriceOpposite,
+            lots: oppositeTrade.lots,
           });
           trades.set(key, {
             quantity: 0,
-            // price: currentTrade.price+stock,
+            price: 0,
+            lots: currentTrade.lots,
           });
         } else {
           trades.set(oppositeKey, {
             quantity: 0,
-            // price: currentTrade.price+stock,
+            price: 0,
+            lots: oppositeTrade.lots,
           });
           trades.set(key, {
             quantity: Math.abs(quantity),
-            // price: currentTrade.price+stock,
+            price: finalPrice,
+            lots: currentTrade.lots,
           });
         }
       }
@@ -91,3 +156,13 @@ quantity,stg.id,strategy_name
   }
 }
 export { TradeService };
+// 100+100
+// buy order 100 + 99 / 2;
+// 99.5
+// sell order 106
+// the positon which exits gets 0  buy avg is (100 +99 )/2 = 99.5 this is wrong
+// sell position 100 -106 if quantity 0 then o price set
+// if quantity  (100 +99)/2 --> 99.5 - 106
+// if sell order then   so remove the 1st buy from the hashmap   100 -108 = 8
+// s
+(100 * 2 + 106 * 1) / 150;
